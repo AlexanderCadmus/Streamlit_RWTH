@@ -230,16 +230,40 @@ with st.expander(r'''See Code'''):
     
 # number of samples to plot from beginning of trace     
 
+# number of samples to plot from beginning of trace     
+
+# s_plot_max = 1000
+# fig_data = plt.figure(figsize=(14,6));
+# fig_data.suptitle('Sample Coordinate Traces', fontsize=16)
+# ax1 = fig_data.add_subplot(211);
+# ax2 = fig_data.add_subplot(212);
+# ax1.plot(samples[:s_plot_max,0]);
+# ax1.set_ylabel('x Position');
+# ax2.plot(samples[:s_plot_max,1]);
+# ax2.set_xlabel('Sample Number');
+# ax2.set_ylabel('y Position');
+# st.pyplot(fig_data)
+
+#2D samples
 s_plot_max = 1000
-fig_data = plt.figure(figsize=(14,6));
-fig_data.suptitle('Sample Coordinate Traces', fontsize=16)
-ax1 = fig_data.add_subplot(211);
-ax2 = fig_data.add_subplot(212);
-ax1.plot(samples[:s_plot_max,0]);
-ax1.set_ylabel('x Position');
-ax2.plot(samples[:s_plot_max,1]);
-ax2.set_xlabel('Sample Number');
-ax2.set_ylabel('y Position');
+fig_data, axs = plt.subplots(2,2, figsize=(20,12))
+fig_data.suptitle('All Sample Data', fontsize=22)
+axs[0,0].plot(samples[:,0])
+axs[0,0].set_title('Sample x Traces',fontsize=18)
+axs[0,0].set_xlabel('Sample Number',fontsize=14)
+axs[0,0].set_ylabel('x Position',fontsize=14)
+axs[1,0].hist(samples[:,0],100)
+axs[1,0].set_title('Sample x Coordinate Frequency',fontsize=18)
+axs[1,0].set_ylabel('Frequency',fontsize=14)
+axs[1,0].set_xlabel('x Position',fontsize=14)
+axs[0,1].plot(samples[:,1])
+axs[0,1].set_title('Sample y Traces',fontsize=18)
+axs[0,1].set_xlabel('Sample Number',fontsize=14)
+axs[0,1].set_ylabel('y Position',fontsize=14)
+axs[1,1].hist(samples[:,1],100)
+axs[1,1].set_title('Sample y Coordinate Frequency',fontsize=18)
+axs[1,1].set_xlabel('y Position',fontsize=14)
+fig_data.tight_layout()
 st.pyplot(fig_data)
 ###########################################################################
 ###############-----Re-Plot Data with Contour Lines-----################### 
