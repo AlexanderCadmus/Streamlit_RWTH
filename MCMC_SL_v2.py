@@ -328,6 +328,7 @@ plt.plot(theta, pdf_1D.pdf(theta));
 plt.title('1-D Population Distribution');
 plt.xlabel('Position');
 plt.ylabel('Frequency');
+st.pyplot(oned_plot)
 ###########################################################################
 ############-----1-D Sampling Procedure with Plotted Data-----############# 
 ###########################################################################  
