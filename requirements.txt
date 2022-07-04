@@ -1,0 +1,6 @@
+streamlit
+numpy
+matplotlib.pyplot
+ipywidgets
+ipywidgets
+scipy.stats
