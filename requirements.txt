@@ -1,0 +1,6 @@
+streamlit
+numpy
+matplotlib
+ipywidgets
+ipywidgets
+scipy
