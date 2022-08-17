@@ -18,16 +18,19 @@ st.markdown(r'''A simple example of Markov Chain Monte Carlo (MCMC) for sampling
 
 adapted from: https://towardsdatascience.com/introduction-to-mcmc-1c8e3ea88cc9''')
 with st.sidebar:
-    st.markdown('''Part 2 Options:''')
+    st.header('''Part 2 Options: 1-D Example''')
     st.markdown('''Display number of samples picked from population''')
-    n_plot = st.slider('Sampled Poplation Data', min_value=1, max_value=1000, value=5, step=10, format=None, key=2, help=None, on_change=None, args=None, kwargs=None, disabled=False)
-    st.markdown('''Variance of population''')
-    var = st.slider('Var', min_value=0, max_value=10, value=1, step=1, format=None, key=3, help=None, on_change=None, args=None, kwargs=None, disabled=False)
-    st.markdown('''Size of sample population''')
-    n_plot_samples = st.slider('n_plot_samples', min_value=1, max_value=100, value=1, step=1, format=None, key=4, help=None, on_change=None, args=None, kwargs=None, disabled=False)        
-    st.markdown('''Part 3 Options:''')
+    n_plot = st.select_slider('Sampled Poplation Data', options=[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765])
+    st.markdown('''Factor by which proposal values are modified''')
+    var = st.slider('Var', min_value=1, max_value=10, value=1, step=1, format=None, key=3, help=None, on_change=None, args=None, kwargs=None, disabled=False)
+    st.markdown('''Sequential Proposals in Metropolis Sampling''')
+    #n_plot_samples = st.slider('n_plot_samples', min_value=1, max_value=100, value=1, step=1, format=None, key=4, help=None, on_change=None, args=None, kwargs=None, disabled=False)        
+    n_plot_samples=st.number_input('Proposal Step',min_value=1, max_value=100,step=1)
+
+    st.header('''Part 3 Options: 2-D Example''')
     st.markdown('''Samples to be picked and plotted''')
-    s_plot = st.slider('Number of Samples', min_value=0, max_value=5000, value=10, step=100, format=None, key=1, help=None, on_change=None, args=None, kwargs=None, disabled=False)
+    s_plot=st.number_input('Number of Samples Plotted',min_value=51, max_value=10000,step=1)
+    #s_plot = st.slider('Number of Samples', min_value=1, max_value=5000, value=10, step=100, format=None, key=1, help=None, on_change=None, args=None, kwargs=None, disabled=False)
 
 ###########################################################################
 ###################-----Part 1-----########################################
@@ -36,20 +39,20 @@ with st.sidebar:
 ###################-----Define Sampling Procedure-----##################### 
 ###########################################################################
 st.markdown('''___________________________________________''')
-st.markdown('''Part 1a: Monte Carlo Simulations''')
+st.header('''Part 1a: Monte Carlo Simulations''')
 st.markdown('''___________________________________________''')
-st.markdown('''Often complex systems with many degrees of freedom or high uncertainty can lead to difficulty in modeling and predicting behavior.  In other words, the use of ordinary Monte Carlo simulations (OMC or simply MC) numerically solves otherwise analytical probelms.  The methods of sampling vary greatly based on the nature of the probelm and the preference of the autohr - all with benefits and potential shortcomings.''')
+st.markdown('''Often complex systems with many degrees of freedom or high uncertainty are difficult to directly model.  It can be far more efficient to simply sample a population to derive its characteristics and then predict its behavior.  This is called a Monte Carlo simulation.  In other words, the use of ordinary Monte Carlo simulations (OMC or simply MC) numerically solves otherwise analytical probelms.  How this is applied is often up to the author whose methods of population sampling may vary based on particular interest or concerns.''')
 st.markdown('''___________________________________________''')
-st.markdown('''Part 1b: Markov Chains''')
+st.header('''Part 1b: Markov Chains''')
 st.markdown('''___________________________________________''')
-st.markdown('''A populat sampling class is the Markov chain.  In this procedure, sequential samples points are determined by the previous sample and a addition of a random component - similar to a random walk.  When combined with a OMC simulation it is capable of solving some potential sampiling issues in higher dimensional spaces.''')
+st.markdown('''A popular method of sampling is generally refered to as a Markov chain.  This procedure is similar to a random walk in that each step is determined by the previous utcome and an addition of a random factor.  This, in turn, can be likend to moving around a board game where each new position is a product of the previous position and a new roll of the dice. When combined with a OMC simulation it is capable of solving some potential sampling issues in higher dimensional spaces observed with less sophisticated techniques.''')
 st.markdown('''___________________________________________''')
-st.markdown('''Part 1c: Defining the Metropolis Procedure''')
+st.header('''Part 1c: Defining the Metropolis Procedure''')
 st.markdown('''___________________________________________''')
 st.markdown('''The Metropolis sampling procedure (formally the Metropolis–Hastings algorithm) is a designed to randomly draw samples from a population of known denisty.  This is accomplished by using a function, to generate sampled points, that is proportional to the density of the population of interest.  After intialization of the system, sampled points are determined by previously sampled data points with the addition of a random value.  In this exercise, a proposal of a new sampled point is determined by the summation of the last sampled poitn and second value determined by a gaussian distribution.  Each new sample point called a rpoposal and undergoes an acceptance process defined by the author.  If reject, a new value is comupted.  If accpected, the process continues.''')
-with st.expander(r'''See Code'''):
+with st.expander(r'''See Code: Metropolis Sampling'''):
     metroplis_code='''def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
-        # start with random initial position
+        # start with random initial position.  Here a gaussian distribution is used.
         theta_ = np.random.randn(dims)*var
         samples = np.empty((n_samples, dims))
         # sampling loop
@@ -76,7 +79,7 @@ with st.expander(r'''See Code'''):
         # remove burn-in phase (to do)
         return samples[int(n_samples*burn_in):,:]'''
     st.code(metroplis_code, language='python')
-
+@st.cache
 def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position.  Here a gaussian distribution is used.
     theta_ = np.random.randn(dims)*var
@@ -111,27 +114,27 @@ def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
 ###############-----Simple 1-D Distribution-----########################### 
 ###########################################################################
 st.markdown('''___________________________________________''')
-st.markdown('''Part 2: 1-D Example''')
+st.header('''Part 2a: 1-D Example''')
 st.markdown('''___________________________________________''')
-  
+st.markdown('''Generate a normal 1-D population with a mean=2 and standard deviation=2''') 
 with st.expander(r'''See Code'''):
-    oned_code='''pdf_1D = norm(2, 2);
+    oned_code='''from scipy.stats import norm
+    pdf_1D = norm(2, 2);
     theta = np.arange(-7,11,0.1);
-    fig_oneD_data, axs = plt.subplots(figsize=(20,12))
-    fig_oneD_data.suptitle('1-D Sample Data', fontsize=22)
+    fig_oneD_data, axs = plt.subplots(figsize=(20,8))
+    fig_oneD_data.suptitle('1-D Population Distribution', fontsize=22)
     axs.plot(theta, pdf_1D.pdf(theta))
-    axs.set_title('Data Distribution',fontsize=18)
     axs.set_xlabel('X Value',fontsize=14)
-    axs.set_ylabel('Frequency',fontsize=14)'''
+    axs.set_ylabel('Frequency',fontsize=14)
+    st.pyplot(fig_oneD_data)'''
     st.code(oned_code, language='python')
 
 from scipy.stats import norm
 pdf_1D = norm(2, 2);
 theta = np.arange(-7,11,0.1);
-fig_oneD_data, axs = plt.subplots(figsize=(20,12))
-fig_oneD_data.suptitle('1-D Sample Data', fontsize=22)
+fig_oneD_data, axs = plt.subplots(figsize=(20,8))
+fig_oneD_data.suptitle('1-D Population Distribution', fontsize=22)
 axs.plot(theta, pdf_1D.pdf(theta))
-axs.set_title('Data Distribution',fontsize=18)
 axs.set_xlabel('X Value',fontsize=14)
 axs.set_ylabel('Frequency',fontsize=14)
 st.pyplot(fig_oneD_data)
@@ -139,60 +142,69 @@ st.pyplot(fig_oneD_data)
 ###########################################################################
 ############-----1-D Sampling Procedure with Plotted Data-----############# 
 ###########################################################################  
-st.markdown('''Gernerate a 1-D Metropolis Sample''')
+st.markdown('''___________________________________________''')
+st.header('''Part 2b: 1-D Metropolis Sample''')
+st.markdown('''___________________________________________''')
+
+st.markdown('''Here the group of 10,000 samples were generated using the Metropolis sampling technique developed above.  Use the slider to plot the number of samples desired.  Note how the distribution more resembles the population with increased sampling.''')
 with st.expander(r'''See Code'''):
     oned_code='''samples = metropolis(pdf_1D.pdf, 1, 10_000, 0., 1)
-    
-    fig_all_data, axs = plt.subplots(2,1, figsize=(20,12))
-    fig_all_data.suptitle('1-D Sample Data', fontsize=22)
-    axs[0].plot(samples[:,0])
-    axs[0].set_title('Sample Traces',fontsize=18)
-    axs[0].set_xlabel('Sample Number',fontsize=14)
-    axs[0].set_ylabel('Position',fontsize=14)
-    axs[1].hist(samples[:,0],100)
-    axs[1].set_title('Sample Position Frequency',fontsize=18)
-    axs[1].set_ylabel('Frequency',fontsize=14)
-    axs[1].set_xlabel('Position',fontsize=14)
+
+    #1D sample data display
+    fig_all_data, axs = plt.subplots(2,1, figsize=(20,12),gridspec_kw={'height_ratios': [1, 4]})
+    fig_all_data.suptitle('1-D Sample Data', fontsize=24)
+    axs[0].plot(samples[:n_plot,0])
+    axs[0].set_title('Sample Traces',fontsize=24)
+    axs[0].set_xlabel('Sample Number',fontsize=20)
+    axs[0].set_ylabel('X Value',fontsize=20)
+    axs[1].hist(samples[:n_plot,0],100)
+    axs[1].set_title('Sample Position Frequency',fontsize=24)
+    axs[1].set_ylabel('Frequency',fontsize=20)
+    axs[1].set_xlabel('X Value',fontsize=20)
+    axs[1].set_xlim([-7, 10])
     fig_all_data.tight_layout()'''
     st.code(oned_code, language='python')
     
 samples = metropolis(pdf_1D.pdf, 1, 10_000, 0., 1)
 
 #1D sample data display
-fig_all_data, axs = plt.subplots(2,1, figsize=(20,12))
+fig_all_data, axs = plt.subplots(2,1, figsize=(20,12),gridspec_kw={'height_ratios': [1, 4]})
 fig_all_data.suptitle('1-D Sample Data', fontsize=24)
-axs[0].plot(samples[:,0])
+axs[0].plot(samples[:n_plot,0])
 axs[0].set_title('Sample Traces',fontsize=24)
 axs[0].set_xlabel('Sample Number',fontsize=20)
 axs[0].set_ylabel('X Value',fontsize=20)
-axs[1].hist(samples[:,0],100)
+axs[1].hist(samples[:n_plot,0],100)
 axs[1].set_title('Sample Position Frequency',fontsize=24)
 axs[1].set_ylabel('Frequency',fontsize=20)
 axs[1].set_xlabel('X Value',fontsize=20)
+axs[1].set_xlim([-7, 10])
 fig_all_data.tight_layout()
 st.pyplot(fig_all_data)
 
-with st.expander(r'''Samples Plotted Over Data'''):
-    fig_oneD_data_sampled, axs = plt.subplots(figsize=(20,12))
-    fig_oneD_data_sampled.suptitle('1-D Sample Data with Density of Sampled Data', fontsize=22)
-    axs.hist(samples[:,0],100,density=True,label="Density of Sampled Data")
-    axs.plot(theta, pdf_1D.pdf(theta),linewidth=3, label="Density of Population Data")
-    axs.set_title('Data Distribution',fontsize=24)
-    axs.set_xlabel('X Value',fontsize=20)
-    axs.set_ylabel('Denisty',fontsize=20)
-    axs.legend(loc='upper right', fontsize=20)
-    st.pyplot(fig_oneD_data_sampled)
-with st.expander(r'''See Code: Samples Plotted Over Data'''):
-        oned_code='''fig_oneD_data_sampled, axs = plt.subplots(figsize=(20,12))
-            fig_oneD_data_sampled.suptitle('1-D Sample Data with Density of Sampled Data', fontsize=22)
-            axs.hist(samples[:,0],100,density=True,label="Density of Sampled Data")
-            axs.plot(theta, pdf_1D.pdf(theta),linewidth=3, label="Density of Population Data")
-            axs.set_title('Data Distribution',fontsize=24)
-            axs.set_xlabel('X Value',fontsize=20)
-            axs.set_ylabel('Denisty',fontsize=20)
-            axs.legend(loc='upper right', fontsize=20)
-            st.pyplot(fig_oneD_data_sampled)'''
+with st.expander(r'''See Code: Density Plot'''):
+        oned_code='''fig_oneD_data_sampled, axs = plt.subplots(figsize=(20,8))
+        fig_oneD_data_sampled.suptitle('1-D Sample Data with Density of Sampled Data', fontsize=22)
+        axs.hist(samples[:n_plot,0],100,density=True,label="Density of Sampled Data")
+        axs.plot(theta, pdf_1D.pdf(theta),linewidth=3, label="Density of Population Data")
+        axs.set_title('Data Distribution',fontsize=24)
+        axs.set_xlabel('X Value',fontsize=20)
+        axs.set_ylabel('Denisty',fontsize=20)
+        axs.set_xlim([-7, 10])
+        axs.legend(loc='upper right', fontsize=20)'''
         st.code(oned_code, language='python')
+
+fig_oneD_data_sampled, axs = plt.subplots(figsize=(20,8))
+fig_oneD_data_sampled.suptitle('1-D Population Density with Sampled Data Density', fontsize=22)
+axs.hist(samples[:n_plot,0],100,density=True,label="Density of Sampled Data")
+axs.plot(theta, pdf_1D.pdf(theta),linewidth=3, label="Density of Population Data")
+axs.set_title('Data Distribution',fontsize=24)
+axs.set_xlabel('X Value',fontsize=20)
+axs.set_ylabel('Denisty',fontsize=20)
+axs.set_xlim([-7, 10])
+axs.legend(loc='upper right', fontsize=20)
+st.pyplot(fig_oneD_data_sampled)
+
 #for 2D sample coordinates
 # fig, axs = plt.subplots(2,2, figsize=(20,12))
 # fig.suptitle('All Sample Data', fontsize=22)
@@ -212,7 +224,8 @@ with st.expander(r'''See Code: Samples Plotted Over Data'''):
 # axs[1,1].set_title('Sample y Coordinate Frequency',fontsize=18)
 # axs[1,1].set_xlabel('y Position',fontsize=14)
 # fig.tight_layout()
-st.markdown('''Plot 1-D data in simple curve''')
+
+st.markdown('''Plot 1-D data in simple curve showing sampled regions highlighted by read ticks.''')
 with st.expander(r'''See Code'''):
     oned_code='''def plot_1D_with_samples(n_plot_samples):
         fig, axs = plt.subplots(figsize=(12,8));
@@ -226,10 +239,10 @@ with st.expander(r'''See Code'''):
     st.code(oned_code, language='python')
 
 def plot_1D_with_samples(n_plot_samples):
-    fig, axs = plt.subplots(figsize=(12,8));
-    axs.set_title('Population Distribution')
-    axs.set_xlabel('Position')
-    axs.set_ylabel('Frequency')
+    fig, axs = plt.subplots(figsize=(12,6));
+    axs.set_title('Population Distribution: with sampled points')
+    axs.set_xlabel('X Value')
+    axs.set_ylabel('Density')
     theta = np.arange(-7,11,0.1)
     axs.plot(theta, pdf_1D.pdf(theta))
     axs.vlines(samples[:n_plot_samples],0,0.02,'r', alpha=0.2)
@@ -239,8 +252,8 @@ st.pyplot(plot_1D_with_samples(n_plot))
 ###########################################################################
 ###################-----Stepwise Sampling Procedure-----################### 
 ###########################################################################  
-st.markdown('''Stepwise sampling vis''')
-with st.expander('See Code'):
+st.markdown('''Here we can define a stepwise Metropolis sampling procedure using proposals for sequentially generated sample points.  Each proposal may be rejected or accepted if it satifies the desired criterion.  Here that is that ratio of probabilities between proposed and current step is larger than a randomly generated value between [0,1].''')
+with st.expander('See Code: Metropolis Sampling with Proposals'):
     sws_code='''def metropolis_with_proposals(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position
     theta_ = np.random.randn(dims)*var
@@ -277,7 +290,7 @@ with st.expander('See Code'):
     # remove burn-in phase (to do)
     return samples[int(n_samples*burn_in):,:], proposals, accepted'''
     st.code(sws_code, language='python')
-
+@st.cache
 def metropolis_with_proposals(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position
     theta_ = np.random.randn(dims)*var
@@ -318,13 +331,13 @@ samples, proposals, accepted = metropolis_with_proposals(pdf_1D.pdf, 1, 10_000, 
 ###########################################################################
 ###############-----Plotting of Stepwise Sampled Data-----################# 
 ###########################################################################
-st.markdown('''Plotting Sampled data''')
+st.markdown('''Here, proposals are ploted agains the population.  For each step the current value is displayed as a black line.  A normal distribution is displayed in yellow around the current step showing the probabilty distribution of the next step or as we say the proposal.  If the proposal is accepted it will be displayed as a green line.  If it is rejected it will be displayed as a red line.''')
 with st.expander('See Code'):
     sws_code='''def plot_1D_with_samples_and_proposal(n_plot_samples):
         # create plot with sampled locations and proposal step for current iteration
         fig, axs = plt.subplots(figsize=(12,8))
         theta = np.arange(-7,11,0.1)
-        axs.set_title('Population Distribution')
+    axs.set_title('Population Distribution with Proposal Steps')
         axs.set_xlabel('Position')
         axs.set_ylabel('Frequency')
         axs.plot(theta, pdf_1D.pdf(theta))
@@ -352,7 +365,7 @@ def plot_1D_with_samples_and_proposal(n_plot_samples):
     # create plot with sampled locations and proposal step for current iteration
     fig, axs = plt.subplots(figsize=(12,8))
     theta = np.arange(-7,11,0.1)
-    axs.set_title('Population Distribution')
+    axs.set_title('Population Distribution with Proposal Steps')
     axs.set_xlabel('Position')
     axs.set_ylabel('Frequency')
     axs.plot(theta, pdf_1D.pdf(theta))
@@ -385,9 +398,9 @@ st.pyplot(plot_1D_with_samples_and_proposal(n_plot_samples))
 ############-----Generate & Plot Bimodal Gaussian Model-----############### 
 ###########################################################################
 st.markdown('''___________________________________________''')
-st.markdown('''Part 3: Multimodal Example''')
+st.header('''Part 3: Multimodal Example''')
 st.markdown('''___________________________________________''')    
-st.markdown('''Example: Bimodal Gaussian Model''')
+st.markdown('''Here a Bimodal Gaussian distribution is generated.''')
 with st.expander(r'''See Code'''):
     mgm_code='''from scipy.stats import multivariate_normal
     def make_pdf(mean1, mean2, cov1, cov2):
@@ -407,9 +420,9 @@ with st.expander(r'''See Code'''):
     mgm_plt=plt.figure(figsize=(10,10))
     x, y = np.mgrid[-4:6:.01, -4:6:.01]
     pos = np.dstack((x, y))
-    plt.title('Metropolis Population Density',fontsize=18)
-    plt.xlabel('x Position',fontsize=10)
-    plt.ylabel('y Position',fontsize=10)
+    plt.title('Population Density Map',fontsize=18)
+    plt.xlabel('X Position',fontsize=10)
+    plt.ylabel('Y Position',fontsize=10)
     plt.contour(x, y, pdf1.pdf(pos) + pdf2.pdf(pos))
     plt.colorbar()
     plt.savefig("multigauss.png")
@@ -438,9 +451,9 @@ pdf2 = multivariate_normal(mean2, cov2)
 mgm_plt=plt.figure(figsize=(10,10))
 x, y = np.mgrid[-4:6:.01, -4:6:.01]
 pos = np.dstack((x, y))
-plt.title('Metropolis Population Density',fontsize=18)
-plt.xlabel('x Position',fontsize=10)
-plt.ylabel('y Position',fontsize=10)
+plt.title('Population Density Map',fontsize=18)
+plt.xlabel('X Position',fontsize=10)
+plt.ylabel('Y Position',fontsize=10)
 plt.contour(x, y, pdf1.pdf(pos) + pdf2.pdf(pos))
 plt.colorbar()
 plt.savefig("multigauss.png")
@@ -455,7 +468,7 @@ st.pyplot(mgm_plt)
 ###########-----Implement Sampling Procedure & Plot Data-----############## 
 ###########################################################################
 
-st.markdown('''Generate and plot samples''')
+st.markdown('''Following the same Metropolis sampling procedure as before we can trace the generation of each smaple point.  Use the Part 3 options to slowly increase the number of samples.  Sequential points are connected by a blue line.''')
 with st.expander(r'''See Code'''):
     trace_code='''    
         def plot_samples(s_plot=1000):
@@ -487,8 +500,8 @@ with st.expander(r'''See Code'''):
 def plot_samples(s_plot=1000):
     fig, axs=plt.subplots(figsize=(10,10));
     axs.set_title('Metropolis Sampling',fontsize=18)
-    axs.set_ylabel('y Position',fontsize=10)
-    axs.set_xlabel('x Position',fontsize=10)
+    axs.set_ylabel('Y Position',fontsize=10)
+    axs.set_xlabel('X Position',fontsize=10)
     Met_Pop=axs.contourf(x, y, pdf1.pdf(pos) + pdf2.pdf(pos), 10, cmap='gray_r', alpha=0.6) #, linewidth=0);
     axs.scatter(samples[:s_plot,0], samples[:s_plot,1], s=1.5, c='k');
     axs.plot(samples[:s_plot,0], samples[:s_plot,1], lw=1, alpha=0.5);
@@ -504,8 +517,8 @@ st.pyplot(plot_samples(s_plot))
 ###########################################################################
 ###############-----Examine Trace Data-----################################ 
 ###########################################################################  
-st.markdown('''Investigate traces to gain insight''')
-with st.expander(r'''See Code'''):
+st.markdown('''As the sample amount increases, we can investigate traces to gain insight to how the sampling progresses as well as how the sample distribution more and more resempbles that of the population.''')
+with st.expander(r'''See Code: plots'''):
     trace_code='''#for 2D sample coordinates
     fig, axs = plt.subplots(2,2, figsize=(20,12))
     fig.suptitle('All Sample Data', fontsize=22)
