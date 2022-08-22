@@ -20,7 +20,7 @@ adapted from: https://towardsdatascience.com/introduction-to-mcmc-1c8e3ea88cc9''
 with st.sidebar:
     st.header('''Part 2 Options: 1-D Example''')
     st.markdown('''Display number of samples picked from population''')
-    n_plot = st.select_slider('Sampled Poplation Data', options=[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765])
+    n_plot = st.select_slider('Sampled Poplation Data', options=[0, 1, 2, 3, 5, 8, 15, 25, 40, 60, 100, 150, 250, 500, 750, 1000, 1500, 2500, 5000, 7500, 10000])
     st.markdown('''Factor by which proposal values are modified''')
     var = st.slider('Var', min_value=1, max_value=10, value=1, step=1, format=None, key=3, help=None, on_change=None, args=None, kwargs=None, disabled=False)
     st.markdown('''Sequential Proposals in Metropolis Sampling''')
@@ -38,18 +38,39 @@ with st.sidebar:
 ###########################################################################
 ###################-----Define Sampling Procedure-----##################### 
 ###########################################################################
+
 st.markdown('''___________________________________________''')
 st.header('''Part 1a: Monte Carlo Simulations''')
 st.markdown('''___________________________________________''')
-st.markdown('''Often complex systems with many degrees of freedom or high uncertainty are difficult to directly model.  It can be far more efficient to simply sample a population to derive its characteristics and then predict its behavior.  This is called a Monte Carlo simulation.  In other words, the use of ordinary Monte Carlo simulations (OMC or simply MC) numerically solves otherwise analytical probelms.  How this is applied is often up to the author whose methods of population sampling may vary based on particular interest or concerns.''')
+st.markdown('''Often complex systems with many degrees of freedom or high uncertainty are difficult 
+to directly model. It can be far more efficient to simply sample a population to derive its characteristics 
+and then predict its behavior. This is called a **Monte Carlo simulation**. In other words, the use of 
+**ordinary Monte Carlo** simulations (OMC or simply MC) numerically solves otherwise analytical problems. 
+How this is applied is often up to the author whose methods of population sampling may vary based on 
+particular interest or concerns.''')
+
 st.markdown('''___________________________________________''')
 st.header('''Part 1b: Markov Chains''')
 st.markdown('''___________________________________________''')
-st.markdown('''A popular method of sampling is generally refered to as a Markov chain.  This procedure is similar to a random walk in that each step is determined by the previous utcome and an addition of a random factor.  This, in turn, can be likend to moving around a board game where each new position is a product of the previous position and a new roll of the dice. When combined with a OMC simulation it is capable of solving some potential sampling issues in higher dimensional spaces observed with less sophisticated techniques.''')
+st.markdown('''A popular method of sampling is generally referred to as a **Markov chain**. This procedure is similar 
+to a random walk in that each step is determined by the previous outcome 
+and an addition of a random factor.  This, in turn, can be linked to moving around a board game 
+where each new position is a product of the previous position and a new roll of the dice. When 
+combined with a OMC simulation it is capable of solving some potential sampling issues in higher 
+dimensional spaces observed with less sophisticated techniques.''')
+
 st.markdown('''___________________________________________''')
 st.header('''Part 1c: Defining the Metropolis Procedure''')
 st.markdown('''___________________________________________''')
-st.markdown('''The Metropolis sampling procedure (formally the Metropolis–Hastings algorithm) is a designed to randomly draw samples from a population of known denisty.  This is accomplished by using a function, to generate sampled points, that is proportional to the density of the population of interest.  After intialization of the system, sampled points are determined by previously sampled data points with the addition of a random value.  In this exercise, a proposal of a new sampled point is determined by the summation of the last sampled poitn and second value determined by a gaussian distribution.  Each new sample point called a rpoposal and undergoes an acceptance process defined by the author.  If reject, a new value is comupted.  If accpected, the process continues.''')
+st.markdown('''The Metropolis sampling procedure (formally the Metropolis–Hastings algorithm) is a 
+designed to randomly draw samples from a population of known density.  This is accomplished by using 
+a function, to generate sampled points, that is proportional to the density of the population of interest. 
+After initialization of the system, sampled points are determined by previously sampled data points with the 
+addition of a random value.  In this exercise, a proposal of a new sampled point is determined by the summation 
+of the last sampled point and second value determined by a gaussian distribution. Each 
+new sample point called a proposal and undergoes an acceptance process defined by the author. 
+If rejected, a new value is computed. If accepted, the process continues.''')
+
 with st.expander(r'''See Code: Metropolis Sampling'''):
     metroplis_code='''def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
         # start with random initial position.  Here a gaussian distribution is used.
@@ -79,6 +100,7 @@ with st.expander(r'''See Code: Metropolis Sampling'''):
         # remove burn-in phase (to do)
         return samples[int(n_samples*burn_in):,:]'''
     st.code(metroplis_code, language='python')
+
 @st.cache
 def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position.  Here a gaussian distribution is used.
@@ -107,16 +129,19 @@ def metropolis(pi, dims, n_samples, burn_in=0.1, var=1):
 
     # remove burn-in phase (to do)
     return samples[int(n_samples*burn_in):,:]
+
 ###########################################################################
 ###################-----Part 2-----########################################
 ###########################################################################
 ###########################################################################
 ###############-----Simple 1-D Distribution-----########################### 
 ###########################################################################
+
 st.markdown('''___________________________________________''')
 st.header('''Part 2a: 1-D Example''')
 st.markdown('''___________________________________________''')
 st.markdown('''Generate a normal 1-D population with a mean=2 and standard deviation=2''') 
+
 with st.expander(r'''See Code'''):
     oned_code='''from scipy.stats import norm
     pdf_1D = norm(2, 2);
@@ -146,7 +171,10 @@ st.markdown('''___________________________________________''')
 st.header('''Part 2b: 1-D Metropolis Sample''')
 st.markdown('''___________________________________________''')
 
-st.markdown('''Here the group of 10,000 samples were generated using the Metropolis sampling technique developed above.  Use the slider to plot the number of samples desired.  Note how the distribution more resembles the population with increased sampling.''')
+st.markdown('''Here the group of 10,000 samples were generated using the Metropolis 
+sampling technique developed above. Use the slider to plot the number of samples desired. 
+Note how the distribution more resembles the population with increased sampling.''')
+
 with st.expander(r'''See Code'''):
     oned_code='''samples = metropolis(pdf_1D.pdf, 1, 10_000, 0., 1)
 
@@ -252,7 +280,12 @@ st.pyplot(plot_1D_with_samples(n_plot))
 ###########################################################################
 ###################-----Stepwise Sampling Procedure-----################### 
 ###########################################################################  
-st.markdown('''Here we can define a stepwise Metropolis sampling procedure using proposals for sequentially generated sample points.  Each proposal may be rejected or accepted if it satifies the desired criterion.  Here that is that ratio of probabilities between proposed and current step is larger than a randomly generated value between [0,1].''')
+
+st.markdown('''Here we can define a stepwise Metropolis sampling procedure using proposals for sequentially 
+generated sample points. Each proposal may be rejected or accepted if it satisfies the desired criterion. 
+Here that is that ratio of probabilities between proposed and current step is larger than a 
+randomly generated value between [0,1].''')
+
 with st.expander('See Code: Metropolis Sampling with Proposals'):
     sws_code='''def metropolis_with_proposals(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position
@@ -290,6 +323,7 @@ with st.expander('See Code: Metropolis Sampling with Proposals'):
     # remove burn-in phase (to do)
     return samples[int(n_samples*burn_in):,:], proposals, accepted'''
     st.code(sws_code, language='python')
+
 @st.cache
 def metropolis_with_proposals(pi, dims, n_samples, burn_in=0.1, var=1):
     # start with random initial position
@@ -328,10 +362,17 @@ def metropolis_with_proposals(pi, dims, n_samples, burn_in=0.1, var=1):
     return samples[int(n_samples*burn_in):,:], proposals, accepted
 
 samples, proposals, accepted = metropolis_with_proposals(pdf_1D.pdf, 1, 10_000, 0., 1)
+
 ###########################################################################
 ###############-----Plotting of Stepwise Sampled Data-----################# 
 ###########################################################################
-st.markdown('''Here, proposals are ploted agains the population.  For each step the current value is displayed as a black line.  A normal distribution is displayed in yellow around the current step showing the probabilty distribution of the next step or as we say the proposal.  If the proposal is accepted it will be displayed as a green line.  If it is rejected it will be displayed as a red line.''')
+
+st.markdown('''Here, proposals are ploted agains the population. For each step the current value 
+is displayed as a black line.  A normal distribution is displayed in yellow around the current 
+step showing the probabilty distribution of the next step or as we say the proposal. 
+If the proposal is accepted it will be displayed as a green line. 
+If it is rejected it will be displayed as a red line.''')
+
 with st.expander('See Code'):
     sws_code='''def plot_1D_with_samples_and_proposal(n_plot_samples):
         # create plot with sampled locations and proposal step for current iteration
@@ -397,6 +438,7 @@ st.pyplot(plot_1D_with_samples_and_proposal(n_plot_samples))
 ###########################################################################
 ############-----Generate & Plot Bimodal Gaussian Model-----############### 
 ###########################################################################
+
 st.markdown('''___________________________________________''')
 st.header('''Part 3: Multimodal Example''')
 st.markdown('''___________________________________________''')    
@@ -468,7 +510,10 @@ st.pyplot(mgm_plt)
 ###########-----Implement Sampling Procedure & Plot Data-----############## 
 ###########################################################################
 
-st.markdown('''Following the same Metropolis sampling procedure as before we can trace the generation of each smaple point.  Use the Part 3 options to slowly increase the number of samples.  Sequential points are connected by a blue line.''')
+st.markdown('''Following the same Metropolis sampling procedure as before we can trace the generation of each 
+sample point. Use the Part 3 options to slowly increase the number of samples. Sequential points are connected 
+by a blue line.''')
+
 with st.expander(r'''See Code'''):
     trace_code='''    
         def plot_samples(s_plot=1000):
