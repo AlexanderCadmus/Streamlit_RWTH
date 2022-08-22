@@ -30,7 +30,7 @@ with st.sidebar:
     st.markdown('''Samples to be picked and plotted''')
     s_plot=st.number_input('Number of Samples Plotted',min_value=51, max_value=10000,step=1)
     #s_plot = st.slider('Number of Samples', min_value=1, max_value=5000, value=10, step=100, format=None, key=1, help=None, on_change=None, args=None, kwargs=None, disabled=False)
-
+    overflow: hideScrollbar ? "hidden" : ["overlay", "auto"],
 ###########################################################################
 ###################-----Part 1-----########################################
 ###########################################################################
