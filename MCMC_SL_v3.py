@@ -26,7 +26,6 @@ with st.sidebar:
     st.markdown('''Sequential Proposals in Metropolis Sampling''')
     #n_plot_samples = st.slider('n_plot_samples', min_value=1, max_value=100, value=1, step=1, format=None, key=4, help=None, on_change=None, args=None, kwargs=None, disabled=False)        
     n_plot_samples=st.number_input('Proposal Step',min_value=1, max_value=100,step=1)
-
     st.header('''Part 3 Options: 2-D Example''')
     st.markdown('''Samples to be picked and plotted''')
     s_plot=st.number_input('Number of Samples Plotted',min_value=51, max_value=10000,step=1)
