@@ -513,7 +513,6 @@ st.pyplot(mgm_plt)
 st.markdown('''Following the same Metropolis sampling procedure as before we can trace the generation of each 
 sample point. Use the Part 3 options to slowly increase the number of samples. Sequential points are connected 
 by a blue line.''')
-
 with st.expander(r'''See Code'''):
     trace_code='''    
         def plot_samples(s_plot=1000):
@@ -562,7 +561,8 @@ st.pyplot(plot_samples(s_plot))
 ###########################################################################
 ###############-----Examine Trace Data-----################################ 
 ###########################################################################  
-st.markdown('''As the sample amount increases, we can investigate traces to gain insight to how the sampling progresses as well as how the sample distribution more and more resempbles that of the population.''')
+st.markdown('''As the sample amount increases, we can investigate traces to gain insight to how the sampling 
+progresses as well as how the sample distribution more and more resembles that of the population.''')
 with st.expander(r'''See Code: plots'''):
     trace_code='''#for 2D sample coordinates
     fig, axs = plt.subplots(2,2, figsize=(20,12))
