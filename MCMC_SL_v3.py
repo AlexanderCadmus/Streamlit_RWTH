@@ -366,9 +366,9 @@ samples, proposals, accepted = metropolis_with_proposals(pdf_1D.pdf, 1, 10_000, 
 ###############-----Plotting of Stepwise Sampled Data-----################# 
 ###########################################################################
 
-st.markdown('''Here, proposals are ploted agains the population. For each step the current value 
+st.markdown('''Here, proposals are plotted against the population. For each step the current value 
 is displayed as a black line.  A normal distribution is displayed in yellow around the current 
-step showing the probabilty distribution of the next step or as we say the proposal. 
+step showing the probability distribution of the next step or as we say the proposal. 
 If the proposal is accepted it will be displayed as a green line. 
 If it is rejected it will be displayed as a red line.''')
 
@@ -497,7 +497,6 @@ plt.xlabel('X Position',fontsize=10)
 plt.ylabel('Y Position',fontsize=10)
 plt.contour(x, y, pdf1.pdf(pos) + pdf2.pdf(pos))
 plt.colorbar()
-plt.savefig("multigauss.png")
 
 pdf = make_pdf(mean1, mean2, cov1, cov2)
 
