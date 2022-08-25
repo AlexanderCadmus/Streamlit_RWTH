@@ -27,6 +27,14 @@ with st.sidebar:
     #n_plot_samples = st.slider('n_plot_samples', min_value=1, max_value=100, value=1, step=1, format=None, key=4, help=None, on_change=None, args=None, kwargs=None, disabled=False)        
     n_plot_samples=st.number_input('Proposal Step',min_value=1, max_value=100,step=1)
     st.header('''Part 3 Options: 2-D Example''')
+    st.markdown('''Bimodal Distribution Characteristics''')
+    st.markdown('''First Mode Settings''')
+    mfx=st.slider('First mode x position',value=2.0,min_value=-2.0, max_value=3.5,step=0.1)
+    mfy=st.slider('First mode y position',value=2.0,min_value=-2.0, max_value=3.5,step=0.1)
+    st.markdown('''Second Mode Settings''')
+    msx=st.slider('Second mode x position',value=-1.0,min_value=-2.0, max_value=3.5,step=0.1)
+    msy=st.slider('Second mode y position',value=-1.0,min_value=-2.0, max_value=3.5,step=0.1)
+    #s_plot = st.slider('Number of Samples', min_value=1, max_value=5000, value=10, step=100, format=None, key=1, help=None, on_change=None, args=None, kwargs=None, disabled=False)
     st.markdown('''Samples to be picked and plotted''')
     s_plot=st.number_input('Number of Samples Plotted',min_value=51, max_value=10000,step=1)
     #s_plot = st.slider('Number of Samples', min_value=1, max_value=5000, value=10, step=100, format=None, key=1, help=None, on_change=None, args=None, kwargs=None, disabled=False)
@@ -158,7 +166,7 @@ pdf_1D = norm(2, 2);
 theta = np.arange(-7,11,0.1);
 fig_oneD_data, axs = plt.subplots(figsize=(20,8))
 fig_oneD_data.suptitle('1-D Population Distribution', fontsize=22)
-axs.plot(theta, pdf_1D.pdf(theta))
+axs.plot(theta, pdf_1D.pdf(theta),c='orange')
 axs.set_xlabel('X Value',fontsize=14)
 axs.set_ylabel('Frequency',fontsize=14)
 st.pyplot(fig_oneD_data)
@@ -193,7 +201,9 @@ with st.expander(r'''See Code'''):
     st.code(oned_code, language='python')
     
 samples = metropolis(pdf_1D.pdf, 1, 10_000, 0., 1)
-
+samples_var_two = metropolis(pdf_1D.pdf, 1, 10_000, 0., 2)
+samples_var_three = metropolis(pdf_1D.pdf, 1, 10_000, 0., 4)
+samples_var_four = metropolis(pdf_1D.pdf, 1, 10_000, 0., 8)
 #1D sample data display
 fig_all_data, axs = plt.subplots(2,1, figsize=(20,12),gridspec_kw={'height_ratios': [1, 4]})
 fig_all_data.suptitle('1-D Sample Data', fontsize=24)
@@ -222,10 +232,10 @@ with st.expander(r'''See Code: Density Plot'''):
         st.code(oned_code, language='python')
 
 fig_oneD_data_sampled, axs = plt.subplots(figsize=(20,8))
-fig_oneD_data_sampled.suptitle('1-D Population Density with Sampled Data Density', fontsize=22)
+fig_oneD_data_sampled.suptitle('1-D Population Density \n with Sampled Data Density', fontsize=22)
 axs.hist(samples[:n_plot,0],100,density=True,label="Density of Sampled Data")
 axs.plot(theta, pdf_1D.pdf(theta),linewidth=3, label="Density of Population Data")
-axs.set_title('Data Distribution',fontsize=24)
+#axs.set_title('Data Distribution',fontsize=24)
 axs.set_xlabel('X Value',fontsize=20)
 axs.set_ylabel('Denisty',fontsize=20)
 axs.set_xlim([-7, 10])
@@ -267,12 +277,16 @@ with st.expander(r'''See Code'''):
 
 def plot_1D_with_samples(n_plot_samples):
     fig, axs = plt.subplots(figsize=(12,6));
-    axs.set_title('Population Distribution: with sampled points')
+    axs.set_title('Population Distribution \n with sampled points using different variances')
     axs.set_xlabel('X Value')
     axs.set_ylabel('Density')
     theta = np.arange(-7,11,0.1)
-    axs.plot(theta, pdf_1D.pdf(theta))
-    axs.vlines(samples[:n_plot_samples],0,0.02,'r', alpha=0.2)
+    axs.plot(theta, pdf_1D.pdf(theta),c='orange',label='Population Distribution')
+    axs.vlines(samples_var_four[:n_plot_samples],0,0.05,'b', alpha=0.4,label='Variance of 8')
+    axs.vlines(samples_var_three[:n_plot_samples],0,0.04,'g', alpha=0.4,label='Variance of 4')
+    axs.vlines(samples_var_two[:n_plot_samples],0,0.03,'y', alpha=0.4,label='Variance of 2')
+    axs.vlines(samples[:n_plot_samples],0,0.02,'r', alpha=0.4,label='Variance of 1')
+    axs.legend()
     return fig
 
 st.pyplot(plot_1D_with_samples(n_plot))
@@ -405,11 +419,11 @@ def plot_1D_with_samples_and_proposal(n_plot_samples):
     # create plot with sampled locations and proposal step for current iteration
     fig, axs = plt.subplots(figsize=(12,8))
     theta = np.arange(-7,11,0.1)
-    axs.set_title('Population Distribution with Proposal Steps')
+    axs.set_title('Population Distribution \n with Proposal Steps')
     axs.set_xlabel('Position')
     axs.set_ylabel('Frequency')
-    axs.plot(theta, pdf_1D.pdf(theta))
-    axs.vlines(samples[:n_plot_samples],0,0.02,'r', alpha=0.2)
+    axs.plot(theta, pdf_1D.pdf(theta), c='orange',label='population Distribution')
+    axs.vlines(samples[:n_plot_samples],0,0.02,'r', alpha=0.2,label='Sampled Locations')
     # proposal pdf
     proposal_pdf = norm(samples[n_plot_samples], var)
     axs.plot(theta, 0.3*proposal_pdf.pdf(theta))
@@ -482,8 +496,8 @@ def make_pdf(mean1, mean2, cov1, cov2):
         return pdf1.pdf(x) + pdf2.pdf(x)
     return pdf
 
-mean1 = [2, 2]
-mean2 = [-1, -1]
+mean1 = [mfx, mfy] #first mean x (mfx) and first mean y (mfy) defined in sidebar
+mean2 = [msx, msy] #second mean x (msx) and first mean y (msy) defined in sidebar
 cov1 = np.array([[1,0.5],[0.5,1]], dtype=float)
 cov2 = np.array([[1,-0.3],[-0.3,1]], dtype=float)
 pdf1 = multivariate_normal(mean1, cov1)
@@ -637,13 +651,13 @@ def plot_samples_and_density(s_plot=1000):
     cbar2 = plt.colorbar(Met_Pop_RS)
     cbar2.set_label('Sampled Population Density', rotation=270, fontsize=10,labelpad=15)
     return fig'''
-    st.code(prob_code, language='python')
+    st.code(prob_code, language='python')   
 
 #Gif showing the "random walk" of the Markov Chain
-video_file = open('Metropolis_2D_sampling.mp4', 'rb')
-video_bytes = video_file.read()
-st.video(video_bytes)     
-    
+#video_file = open('Metropolis_2D_sampling.mp4', 'rb')
+#video_bytes = video_file.read()
+#st.video(video_bytes)  
+
 from scipy.stats import gaussian_kde
 X,Y = np.mgrid[-4:6:.1, -4:6:.1]
 positions = np.vstack([X.ravel(), Y.ravel()])
