@@ -642,8 +642,7 @@ def plot_samples_and_density(s_plot=1000):
 #Gif showing the "random walk" of the Markov Chain
 video_file = open('Metropolis_2D_sampling.mp4', 'rb')
 video_bytes = video_file.read()
-st.video(video_bytes)
-st.video(, format='video/mp4', start_time=0)     
+st.video(video_bytes)     
     
 from scipy.stats import gaussian_kde
 X,Y = np.mgrid[-4:6:.1, -4:6:.1]
