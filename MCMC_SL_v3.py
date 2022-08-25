@@ -638,6 +638,9 @@ def plot_samples_and_density(s_plot=1000):
     cbar2.set_label('Sampled Population Density', rotation=270, fontsize=10,labelpad=15)
     return fig'''
     st.code(prob_code, language='python')
+
+#Gif showing the "random walk" of the Markov Chain
+st.video(Metropolis_2D_sampling.mp4, format='video/mp4', start_time=0)     
     
 from scipy.stats import gaussian_kde
 X,Y = np.mgrid[-4:6:.1, -4:6:.1]
