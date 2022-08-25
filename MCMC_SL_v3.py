@@ -653,11 +653,6 @@ def plot_samples_and_density(s_plot=1000):
     return fig'''
     st.code(prob_code, language='python')   
 
-#Gif showing the "random walk" of the Markov Chain
-#video_file = open('Metropolis_2D_sampling.mp4', 'rb')
-#video_bytes = video_file.read()
-#st.video(video_bytes)  
-
 from scipy.stats import gaussian_kde
 X,Y = np.mgrid[-4:6:.1, -4:6:.1]
 positions = np.vstack([X.ravel(), Y.ravel()])
@@ -685,3 +680,9 @@ def plot_samples_and_density(s_plot=1000):
 
 psd_plot=plot_samples_and_density(s_plot)
 st.pyplot(psd_plot)
+
+st.markdown('''Here is a short video showing the progression of the sampleing procedure.  Note how the sample path meanders due to the sample generation being dependent on the previous samples.  In mathematics and statistics, this behavior is refered to as a *random walk*.''')
+#Gif showing the "random walk" of the Markov Chain
+video_file = open('Metropolis_2D_sampling.mp4', 'rb')
+video_bytes = video_file.read()
+st.video(video_bytes)  
